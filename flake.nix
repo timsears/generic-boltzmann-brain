@@ -1,15 +1,13 @@
 {
   description = "nix support for generic-boltzmann-brain";
 
-  inputs.nixpkgs.url = "github:NixOs/nixpkgs/nixos-22.05"; 
-
-  inputs.nixpkgs-unstable.url = "github:NixOs/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "github:NixOs/nixpkgs/nixpkgs-unstable";
   
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   inputs.mach-nix.url = "github:DavHau/mach-nix";
   
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, mach-nix }:
+  outputs = inputs@{ self, nixpkgs, flake-utils, mach-nix }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
 
@@ -18,15 +16,6 @@
         compiler = "ghc902";  
          
         pkgs = import nixpkgs {
-          inherit system;
-          config = {
-            allowUnfree = true;
-            allowBroken = true;
-            allowUnsupportedSystem = true;
-          };
-        };
-
-        unstable = import nixpkgs-unstable {
           inherit system;
           config = {
             allowUnfree = true;
@@ -69,13 +58,13 @@
           packages = p: [
             p.generic-boltzmann-brain
           ]; 
-          buildInputs = [
-            unstable.cabal-install
-            unstable.ghcid
-            unstable.haskell-language-server
-            unstable.hlint
-            unstable.ormolu
-            unstable.cabal2nix
+          buildInputs = with pkgs; [
+            cabal-install
+            ghcid
+            haskell-language-server
+            hlint
+            ormolu
+            cabal2nix
             paganini-py
           ];
         };
