@@ -11,7 +11,7 @@
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
 
-        name = "geneeric-boltzmann-brain";
+        name = "generic-boltzmann-brain";
 
         compiler = "ghc902";  
          
