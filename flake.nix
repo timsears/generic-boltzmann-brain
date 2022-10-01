@@ -1,5 +1,5 @@
 {
-  description = "nix support for geneeric boltzmann-brain";
+  description = "nix support for generic-boltzmann-brain";
 
   inputs.nixpkgs.url = "github:NixOs/nixpkgs/nixos-22.05"; 
 
@@ -47,10 +47,8 @@
         haskellPackages = pkgs.haskell.packages.${compiler}.override {
           overrides = self: super: {
             
-            generic-boltzmann-brain = # pkgs.haskell.lib.dontCheck (
-              self.callCabal2nix "generic-boltzmann-brain" ./. { }
-          # )
-          ;
+            generic-boltzmann-brain = 
+              self.callCabal2nix "generic-boltzmann-brain" ./. { };
 
             BinderAnn = self.callCabal2nix "BinderAnn" (builtins.fetchGit {
               url = "https://github.com/OctopiChalmers/BinderAnn.git";
@@ -58,10 +56,11 @@
             }) {};
 
             paganini-hs = pkgs.haskell.lib.dontCheck (
-            self.callCabal2nix "paganini-hs" (builtins.fetchGit {
-              url = "https://github.com/maciej-bendkowski/paganini-hs.git";
-              rev = "f6f4f8d26c30544d17eab63583d4ff5e9158d2d9";
-            }) {});
+              self.callCabal2nix "paganini-hs" (builtins.fetchGit {
+                url = "https://github.com/maciej-bendkowski/paganini-hs.git";
+                rev = "f6f4f8d26c30544d17eab63583d4ff5e9158d2d9";
+              }) {}
+            );
           };
         };
 
@@ -80,12 +79,13 @@
             paganini-py
           ];
         };
-        
-        drv = haskellPackages.generic-boltzmann-brain;
+
+        # TODO: add paganini-py to the derivation dependencies and remove `dontCheck`. don't check for now
+        drv = pkgs.haskell.lib.dontCheck haskellPackages.generic-boltzmann-brain;
         
       in
         rec {
           inherit devShell;
-          defaultPackage = pkgs.haskell.lib.dontCheck drv;
-        });
-}
+          defaultPackage = drv;
+        })
+  ;}
